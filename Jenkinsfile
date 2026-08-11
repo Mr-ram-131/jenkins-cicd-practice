@@ -5,19 +5,22 @@ pipeline {
 
         stage('Build') {
             steps {
-                bat 'echo Building application...'
+                echo 'Starting build...'
+                bat 'python --version'
+                bat 'pip install -r requirements.txt'
             }
         }
 
         stage('Test') {
             steps {
-                bat 'echo Running tests...'
+                echo 'Running tests...'
+                bat 'pytest'
             }
         }
 
         stage('Deploy') {
             steps {
-                bat 'echo Deploying application...'
+                echo 'Deploying application...'
             }
         }
     }
