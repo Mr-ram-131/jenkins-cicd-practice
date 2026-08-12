@@ -18,8 +18,12 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                echo 'Deploying application...'
+                sshagent(credentials: ['ec2-ssh-key']) {
+                   bat '''
+                       ssh -o StrictHostKeyChecking=no ubuntu@3.110.114.110 "echo Jenkins successfully connected to EC2"
+                   '''
+                }
             }
         }
-    }
 }
+
