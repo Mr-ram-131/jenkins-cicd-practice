@@ -18,14 +18,18 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
-            steps {
-                withCredentials([file(credentialsId: 'newec2-key-file', variable: 'SSH_KEY')]) {
-                    bat '''
-                        ssh -i "%SSH_KEY%" -o StrictHostKeyChecking=no ubuntu@13.235.67.74 "echo Jenkins successfully connected to EC2"
-                    '''
-                }
-            }
+       stage('Deploy') {
+    steps {
+        withCredentials([file(credentialsId: 'newec2-key-file', variable: 'SSH_KEY')]) {
+            bat '''
+                icacls "%SSH_KEY%" /inheritance:r
+                icacls "%SSH_KEY%" /grant:r "SYSTEM:F"
+                icacls "%SSH_KEY%" /grant:r "Administrators:F"
+
+                ssh -i "%SSH_KEY%" -o StrictHostKeyChecking=no ubuntu@13.235.67.74 "echo Jenkins successfully connected to EC2"
+            '''
         }
+    }
+}
     }
 }
