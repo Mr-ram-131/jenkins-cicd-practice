@@ -20,7 +20,7 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                withCredentials([file(credentialsId: 'ec2-key-file', variable: 'SSH_KEY')]) {
+                withCredentials([file(credentialsId: 'newec2-key-file', variable: 'SSH_KEY')]) {
                     bat '''
                         ssh -i "%SSH_KEY%" -o StrictHostKeyChecking=no ubuntu@3.110.114.110 "echo Jenkins successfully connected to EC2"
                     '''
