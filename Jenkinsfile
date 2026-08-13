@@ -30,21 +30,19 @@ pipeline {
         }
 
         stage('Deploy') {
-            steps {
+    steps {
+        withCredentials([
+            file(credentialsId: 'newec2-key-file', variable: 'SSH_KEY')
+        ]) {
+            bat '''
+                icacls "%SSH_KEY%" /inheritance:r
+                icacls "%SSH_KEY%" /grant:r "SYSTEM:F"
+                icacls "%SSH_KEY%" /grant:r "Administrators:F"
 
-                withCredentials([
-                    file(credentialsId: 'newec2-key-file', variable: 'SSH_KEY')
-                ]) {
-
-                    bat '''
-                        icacls "%SSH_KEY%" /inheritance:r
-                        icacls "%SSH_KEY%" /grant:r "SYSTEM:F"
-                        icacls "%SSH_KEY%" /grant:r "Administrators:F"
-
-                        ssh -i "%SSH_KEY%" -o StrictHostKeyChecking=no ubuntu@%EC2_HOST% "echo Connected to EC2"
-                    '''
-                }
-            }
+                ssh -i "%SSH_KEY%" -o StrictHostKeyChecking=no ubuntu@%EC2_HOST% "cd ~/git_practice && git pull origin master && docker build -t %IMAGE_NAME%:%IMAGE_TAG% . && docker stop %APP_NAME% || true && docker rm %APP_NAME% || true && docker run -d --name %APP_NAME% -p %APP_PORT%:5000 %IMAGE_NAME%:%IMAGE_TAG% && sleep 5 && curl -f http://localhost:%APP_PORT%/health"
+            '''
         }
     }
+} 
+   }
 }
