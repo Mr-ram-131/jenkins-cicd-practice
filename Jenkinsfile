@@ -5,6 +5,8 @@ pipeline {
         EC2_HOST = '65.0.177.86'
         APP_NAME = 'cicd-flask-app'
         APP_PORT = '5000'
+	IMAGE_NAME = 'cicd-flask-app'
+	IMAGE_TAG = "${BUILD_NUMBER}"
     }
 
     stages {
